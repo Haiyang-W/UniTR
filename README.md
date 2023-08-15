@@ -9,7 +9,7 @@ This repo is the official implementation of ICCV paper: [UniTR: A Unified and Ef
 > UniTR: A Unified and Efficient Multi-Modal Transformer for Bird's-Eye-View Representation
 >
 > [Haiyang Wang*](https://scholar.google.com/citations?user=R3Av3IkAAAAJ&hl=en&oi=ao), [Hao Tang*](https://scholar.google.com/citations?user=MyarrsEAAAAJ&hl=en), Shaoshuai Shi $^\dagger$, Aoxue Li, Zhenguo Li, Bernt Schiele, Liwei Wang $^\dagger$
-> - Contact: Haiyang Wang (wanghaiyang6@stu.pku.edu.cn), Hao Tang (tanghao@stu.pku.edu.cn), Shaoshuai Shi (sshi@mpi-inf.mpg.de)
+> Contact: Haiyang Wang (wanghaiyang6@stu.pku.edu.cn), Hao Tang (tanghao@stu.pku.edu.cn), Shaoshuai Shi (shaoshuaics@gmail.com)
 
 🔥 Gratitude to Tang Hao for extensive code refactoring and noteworthy contributions to open-source initiatives. His invaluable efforts were pivotal in ensuring the seamless completion of UniTR.
 
