@@ -8,7 +8,7 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 
 > UniTR: A Unified and Efficient Multi-Modal Transformer for Bird's-Eye-View Representation
 >
-> [Haiyang Wang*](https://scholar.google.com/citations?user=R3Av3IkAAAAJ&hl=en&oi=ao), [Hao Tang*](https://scholar.google.com/citations?user=MyarrsEAAAAJ&hl=en), [Shaoshuai Shi$^\dagger$](https://scholar.google.com/citations?user=DC9wzBgAAAAJ&hl=en&oi=ao), [Aoxue Li](https://openreview.net/profile?id=~Aoxue_Li2), [Zhenguo Li](https://scholar.google.com/citations?hl=en&user=XboZC1AAAAAJ&view_op=list_works&sortby=pubdate), [Bernt Schiele](https://scholar.google.com/citations?user=z76PBfYAAAAJ&hl=en), [Liwei Wang$^\dagger$](https://scholar.google.com/citations?user=VZHxoh8AAAAJ&hl=en)
+> [Haiyang Wang*](https://scholar.google.com/citations?user=R3Av3IkAAAAJ&hl=en&oi=ao), [Hao Tang*](https://scholar.google.com/citations?user=MyarrsEAAAAJ&hl=en), [Shaoshuai Shi](https://scholar.google.com/citations?user=DC9wzBgAAAAJ&hl=en&oi=ao) $^\dagger$, [Aoxue Li](https://openreview.net/profile?id=~Aoxue_Li2), [Zhenguo Li](https://scholar.google.com/citations?hl=en&user=XboZC1AAAAAJ&view_op=list_works&sortby=pubdate), [Bernt Schiele](https://scholar.google.com/citations?user=z76PBfYAAAAJ&hl=en), [Liwei Wang](https://scholar.google.com/citations?user=VZHxoh8AAAAJ&hl=en) $^\dagger$
 > 
 > Contact: Haiyang Wang (wanghaiyang6@stu.pku.edu.cn), Hao Tang (tanghao@stu.pku.edu.cn), Shaoshuai Shi (shaoshuaics@gmail.com)
 
