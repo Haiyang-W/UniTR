@@ -1,6 +1,6 @@
 # UniTR: The First Unified Multi-modal Transformer Backbone for 3D Perception
 
-This repo is the official implementation of ICCV paper: [UniTR: A Unified and Efficient Multi-Modal Transformer for Bird's-Eye-View Representation](https://github.com/Haiyang-W/UniTR) as well as the follow-ups. Our UniTR achieves state-of-the-art performance on nuScenes Dataset with a real unified and weight-sharing multi-modal (e.g., `Cameras` and `LiDARs`) backbone. We have made every effort to ensure that the codebase is clean, concise, easily readable, state-of-the-art, and relies only on minimal dependencies.
+This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unified and Efficient Multi-Modal Transformer for Bird's-Eye-View Representation](http://arxiv.org/abs/2308.07732) as well as the follow-ups. Our UniTR achieves state-of-the-art performance on nuScenes Dataset with a real unified and weight-sharing multi-modal (e.g., `Cameras` and `LiDARs`) backbone. UniTR is built upon the codebase of [DSVT](https://github.com/Haiyang-W/DSVT), we have made every effort to ensure that the codebase is clean, concise, easily readable, state-of-the-art, and relies only on minimal dependencies.
 
 <div align="center">
   <img src="assets/Figure1.png" width="700"/>
@@ -8,7 +8,7 @@ This repo is the official implementation of ICCV paper: [UniTR: A Unified and Ef
 
 > UniTR: A Unified and Efficient Multi-Modal Transformer for Bird's-Eye-View Representation
 >
-> [Haiyang Wang*](https://scholar.google.com/citations?user=R3Av3IkAAAAJ&hl=en&oi=ao), [Hao Tang*](https://scholar.google.com/citations?user=MyarrsEAAAAJ&hl=en), Shaoshuai Shi $^\dagger$, Aoxue Li, Zhenguo Li, Bernt Schiele, Liwei Wang $^\dagger$
+> [Haiyang Wang*](https://scholar.google.com/citations?user=R3Av3IkAAAAJ&hl=en&oi=ao), [Hao Tang*](https://scholar.google.com/citations?user=MyarrsEAAAAJ&hl=en), [Shaoshuai Shi$^\dagger$](https://scholar.google.com/citations?user=DC9wzBgAAAAJ&hl=en&oi=ao), [Aoxue Li](https://openreview.net/profile?id=~Aoxue_Li2), [Zhenguo Li](https://scholar.google.com/citations?hl=en&user=XboZC1AAAAAJ&view_op=list_works&sortby=pubdate), [Bernt Schiele](https://scholar.google.com/citations?user=z76PBfYAAAAJ&hl=en), [Liwei Wang$^\dagger$](https://scholar.google.com/citations?user=VZHxoh8AAAAJ&hl=en)
 > 
 > Contact: Haiyang Wang (wanghaiyang6@stu.pku.edu.cn), Hao Tang (tanghao@stu.pku.edu.cn), Shaoshuai Shi (shaoshuaics@gmail.com)
 
@@ -18,7 +18,7 @@ This repo is the official implementation of ICCV paper: [UniTR: A Unified and Ef
 
 ## News
 - [23-07-13] 🔥 UniTR is accepted at [ICCV 2023](https://iccv2023.thecvf.com/).
-- [23-08-15] UniTR is released on [arXiv](https://github.com/Haiyang-W/UniTR).
+- [23-08-15] UniTR is released on [arXiv](http://arxiv.org/abs/2308.07732).
 
 ## Overview
 - [Todo](https://github.com/Haiyang-W/UniTR#todo)
@@ -30,7 +30,7 @@ This repo is the official implementation of ICCV paper: [UniTR: A Unified and Ef
 
 ## TODO
 
-- [x] Release the [arXiv](https://github.com/Haiyang-W/UniTR) version.
+- [x] Release the [arXiv](http://arxiv.org/abs/2308.07732) version.
 - [x] SOTA performance of multi-modal 3D object detection (Nuscenes) and BEV Map Segmentation (Nuscenes).
 - [ ] Clean up and release the code of NuScenes (before ICCV main conference).
 - [ ] Merge UniTR to [OpenPCDet](https://github.com/open-mmlab/OpenPCDet).
