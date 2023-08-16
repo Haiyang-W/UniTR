@@ -19,6 +19,8 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 ## News
 - [23-07-13] 🔥 UniTR is accepted at [ICCV 2023](https://iccv2023.thecvf.com/).
 - [23-08-15] UniTR is released on [arXiv](http://arxiv.org/abs/2308.07732).
+- [23-08-16] 🔥 `SOTA` performance of multi-modal 3D object detection and BEV Map Segmentation on NuScenes validation set.
+- [23-08-16] 🔥 `SOTA` Our single multi-modal UniTR outshines all other non-TTA approaches on [nuScenes Detection benchmark](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Any) (Aug 2023) in terms of NDS `74.5`. 
 
 ## Overview
 - [Todo](https://github.com/Haiyang-W/UniTR#todo)
