@@ -1,0 +1,207 @@
+CLASS_NAMES: ['car','truck', 'construction_vehicle', 'bus', 'trailer',
+              'barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone']
+DATA_CONFIG:
+    _BASE_CONFIG_: cfgs/dataset_configs/nuscenes_dataset.yaml
+    POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+    INFO_PATH: {
+      'train': [nuscenes_infos_10sweeps_train.pkl],
+      'test': [nuscenes_infos_10sweeps_val.pkl],
+    }
+
+    CAMERA_CONFIG:
+      USE_CAMERA: True
+      IMAGE:
+          FINAL_DIM: [256,704]
+          RESIZE_LIM_TRAIN: [0.38, 0.55]
+          RESIZE_LIM_TEST: [0.48, 0.48]
+    
+    MAP_CONFIG:
+      USE_MAP: True
+      CLASS_NAMES: ['drivable_area', 'ped_crossing', 'walkway', 'stop_line', 'carpark_area', 'divider']
+
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['placeholder']
+        AUG_CONFIG_LIST:
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+            
+            - NAME: random_world_translation
+              NOISE_TRANSLATE_STD: [0.5, 0.5, 0.5]
+            
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [0.9, 1.1]
+            
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: ['x', 'y']
+
+            - NAME: imgaug
+              ROT_LIM: [-5.4, 5.4]
+              RAND_FLIP: True
+
+
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: shuffle_points
+          SHUFFLE_ENABLED: {
+            'train': True,
+            'test': True
+          }
+
+        - NAME: transform_points_to_voxels_placeholder
+          VOXEL_SIZE: [0.4, 0.4, 8.0]
+
+        - NAME: image_calibrate
+        
+        - NAME: image_normalize
+          mean: [0.485, 0.456, 0.406]
+          std: [0.229, 0.224, 0.225]
+          bgr2rgb: True
+        - NAME: load_bev_segmentation
+          classes: ['drivable_area', 'ped_crossing', 'walkway', 'stop_line', 'carpark_area', 'divider']
+          xbound: [-50.0, 50.0, 0.5]
+          ybound: [-50.0, 50.0, 0.5]
+          dataset_root: '../data/nuscenes/v1.0-trainval'
+          location: ['singapore-onenorth', 'singapore-hollandvillage', 'singapore-queenstown', 'boston-seaport']
+
+MODEL:
+    NAME: UniTRMAP
+  
+    MM_BACKBONE:
+      NAME: UniTR
+      PATCH_EMBED:
+        in_channels: 3
+        image_size: [256, 704]
+        embed_dims: 128
+        patch_size: 8 
+        patch_norm: True 
+        norm_cfg: {'type': 'LN'}
+
+      IMAGE_INPUT_LAYER:
+        sparse_shape: [32, 88, 1]
+        d_model: [128]
+        set_info: [[90, 4]]
+        window_shape: [[30, 30, 1]]
+        hybrid_factor: [1, 1, 1] # x, y, z
+        shifts_list: [[[0, 0, 0], [15, 15, 0]]]
+        input_image: True
+      
+      LIDAR_INPUT_LAYER:
+        sparse_shape: [256, 256, 1]
+        d_model: [128]
+        set_info: [[90, 4]]
+        window_shape: [[30, 30, 1]]
+        hybrid_factor: [1, 1, 1] # x, y, z
+        shifts_list: [[[0, 0, 0], [15, 15, 0]]]
+      
+      set_info: [[90, 4]]
+      d_model: [128]
+      nhead: [8]
+      dim_feedforward: [256]
+      dropout: 0.0
+      activation: gelu
+      checkpoint_blocks: [0,1,2,3]
+      layer_cfg: {'use_bn': False, 'split_ffn': True, 'split_residual': True}
+
+      # fuse backbone config
+      FUSE_BACKBONE:
+        IMAGE2LIDAR: 
+          block_start: 3
+          block_end: 4
+          point_cloud_range: [-51.2, -51.2, -10.0, 51.2, 51.2, 10.0]
+          voxel_size: [0.4,0.4,20.0]
+          sample_num: 20
+          image2lidar_layer:
+            sparse_shape: [256, 256, 1]
+            d_model: [128]
+            set_info: [[90, 1]]
+            window_shape: [[30, 30, 1]]
+            hybrid_factor: [1, 1, 1]
+            shifts_list: [[[0, 0, 0], [15, 15, 0]]]
+            expand_max_voxels: 10
+        LIDAR2IMAGE:
+          block_start: 1
+          block_end: 3
+          point_cloud_range: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+          voxel_size: [0.4,0.4,8.0]
+          sample_num: 1
+          lidar2image_layer:
+            sparse_shape: [96, 264, 6]
+            d_model: [128]
+            set_info: [[90, 2]]
+            window_shape: [[30, 30, 1]]
+            hybrid_factor: [1, 1, 1]
+            shifts_list: [[[0, 0, 0], [15, 15, 0]]]
+            expand_max_voxels: 30
+      out_indices: []
+
+    VFE:
+      NAME: DynPillarVFE
+      WITH_DISTANCE: False
+      USE_ABSLOTE_XYZ: True
+      USE_NORM: True
+      NUM_FILTERS: [ 128, 128 ]
+
+    MAP_TO_BEV:
+      NAME: PointPillarScatter3d
+      INPUT_SHAPE: [256, 256, 1]
+      NUM_BEV_FEATURES: 128
+
+    BACKBONE_2D:
+      NAME: BaseBEVBackbone
+      LAYER_NUMS: [ 5, 5, 5, 5] 
+      LAYER_STRIDES: [2, 2, 2, 2]
+      NUM_FILTERS: [128, 256, 256, 256]
+      UPSAMPLE_STRIDES: [1, 2, 4, 8]
+      NUM_UPSAMPLE_FILTERS: [256, 256, 256, 256]
+      USE_CONV_FOR_NO_STRIDE: True
+
+    DENSE_HEAD:
+        CLASS_AGNOSTIC: False
+        NAME: BEVSegmentationHead
+        GRID_TRANSFORM:
+          INPUT_SCOPE: [[-51.2, 51.2, 0.8], [-51.2, 51.2, 0.8]]
+          OUTPUT_SCOPE: [[-50, 50, 0.5], [-50, 50, 0.5]]
+        LOSS_CONFIG:
+          gamma: 2.0
+          alpha: -1
+          
+
+    POST_PROCESSING:
+        RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+        SCORE_THRESH: 0.1
+        OUTPUT_RAW_SCORE: False
+
+        EVAL_METRIC: kitti
+
+        NMS_CONFIG:
+            MULTI_CLASSES_NMS: True
+            NMS_TYPE: nms_gpu
+            NMS_THRESH: 0.2
+            NMS_PRE_MAXSIZE: 1000
+            NMS_POST_MAXSIZE: 83
+
+
+
+OPTIMIZATION:
+    BATCH_SIZE_PER_GPU: 3
+    NUM_EPOCHS: 20
+
+    OPTIMIZER: adam_onecycle
+    LR: 0.001
+    WEIGHT_DECAY: 0.01
+    MOMENTUM: 0.9
+
+    MOMS: [0.95, 0.85]
+    PCT_START: 0.4
+    DIV_FACTOR: 10
+    DECAY_STEP_LIST: [35, 45]
+    LR_DECAY: 0.1
+    LR_CLIP: 0.0000001
+
+    LR_WARMUP: False
+    WARMUP_EPOCH: 1
+
+    GRAD_NORM_CLIP: 10
+    LOSS_SCALE_FP16: 32 

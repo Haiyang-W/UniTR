@@ -12,29 +12,30 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 > 
 > Contact: Haiyang Wang (wanghaiyang6@stu.pku.edu.cn), Hao Tang (tanghao@stu.pku.edu.cn), Shaoshuai Shi (shaoshuaics@gmail.com)
 
-🔥 Gratitude to Tang Hao for extensive code refactoring and noteworthy contributions to open-source initiatives. His invaluable efforts were pivotal in ensuring the seamless completion of UniTR.
+🚀 Gratitude to Tang Hao for extensive code refactoring and noteworthy contributions to open-source initiatives. His invaluable efforts were pivotal in ensuring the seamless completion of UniTR.
 
 
 
 ## News
+- [23-09-30] 🚀 Code of NuScenes is released.
+- [23-08-16] 🏆  `SOTA` Our single multi-modal UniTR outshines all other non-TTA approaches on [nuScenes Detection benchmark](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Any) (Aug 2023) in terms of NDS `74.5`. 
+- [23-08-16] 🏆  `SOTA` performance of multi-modal 3D object detection and BEV Map Segmentation on NuScenes validation set.
+- [23-08-15] 👀 UniTR is released on [arXiv](http://arxiv.org/abs/2308.07732).
 - [23-07-13] 🔥 UniTR is accepted at [ICCV 2023](https://iccv2023.thecvf.com/).
-- [23-08-15] UniTR is released on [arXiv](http://arxiv.org/abs/2308.07732).
-- [23-08-16] 🔥 `SOTA` performance of multi-modal 3D object detection and BEV Map Segmentation on NuScenes validation set.
-- [23-08-16] 🔥 `SOTA` Our single multi-modal UniTR outshines all other non-TTA approaches on [nuScenes Detection benchmark](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Any) (Aug 2023) in terms of NDS `74.5`. 
 
 ## Overview
-- [Todo](https://github.com/Haiyang-W/UniTR#todo)
-- [Introduction](https://github.com/Haiyang-W/UniTR#introduction)
-- [Main Results](https://github.com/Haiyang-W/UniTR#main-results)
-- [Quick Start](https://github.com/Haiyang-W/UniTR#quick-start)
-- [Citation](https://github.com/Haiyang-W/UniTR#citation)
-- [Acknowledgments](https://github.com/Haiyang-W/UniTR#potential-research)
+- [👀 Todo](https://github.com/Haiyang-W/UniTR#todo)
+- [🤔 Introduction](https://github.com/Haiyang-W/UniTR#introduction)
+- [🚀 Main Results](https://github.com/Haiyang-W/UniTR#main-results)
+- [🛠️ Quick Start](https://github.com/Haiyang-W/UniTR#quick-start)
+- [📘 Citation](https://github.com/Haiyang-W/UniTR#citation)
+- [🚀 Acknowledgments](https://github.com/Haiyang-W/UniTR#potential-research)
 
 ## TODO
 
 - [x] Release the [arXiv](http://arxiv.org/abs/2308.07732) version.
 - [x] SOTA performance of multi-modal 3D object detection (Nuscenes) and BEV Map Segmentation (Nuscenes).
-- [ ] Clean up and release the code of NuScenes (before ICCV main conference).
+- [x] Clean up and release the code of NuScenes.
 - [ ] Merge UniTR to [OpenPCDet](https://github.com/open-mmlab/OpenPCDet).
 
 ## Introduction
@@ -52,8 +53,8 @@ In this paper, we present an efficient multi-modal backbone for outdoor 3D perce
 ### 3D Object Detection (on NuScenes validation)
 |  Model  | NDS | mAP |mATE | mASE | mAOE | mAVE| mAAE | ckpt | Log |
 |---------|---------|--------|---------|---------|--------|---------|--------|--------|--------|
-|  UniTR | 73.1 | 70.0 | 26.3 | 24.7 | 26.8 | 24.6 | 17.9 | [ckpt](https://github.com/Haiyang-W/UniTR)| [Log](https://github.com/Haiyang-W/UniTR)|
-|  UniTR+LSS | 73.3 | 70.5 | 26.0 | 24.4 | 26.8 | 24.8 | 18.7 | [ckpt](https://github.com/Haiyang-W/UniTR)| [Log](https://github.com/Haiyang-W/UniTR)|
+|  UniTR | 73.0 | 70.1 | 26.3 | 24.7 | 26.8 | 24.6 | 17.9 | [ckpt](https://drive.google.com/file/d/10_1QCJ2uJqQ5XBSX6SQ2EVxFFais38fK/view?usp=sharing)| [Log](https://drive.google.com/file/d/1TfPRr4bItJxgScjdxMme4-C5Lb0Mjies/view?usp=sharing)|
+|  UniTR+LSS | 73.3 | 70.5 | 26.0 | 24.4 | 26.8 | 24.8 | 18.7 | [ckpt](https://drive.google.com/file/d/1D-_RRN2P9MnI2u8DWRNt7I2-58gohRQ_/view?usp=sharing)| [Log](https://drive.google.com/file/d/1mWDXF22YmeQnHvrmLTehRJGrXySvl0NK/view?usp=sharing)|
 
 
 ### 3D Object Detection (on NuScenes test)
@@ -65,8 +66,8 @@ In this paper, we present an efficient multi-modal backbone for outdoor 3D perce
 ### Bev Map Segmentation (on NuScenes validation)
 |  Model  | mIoU | Drivable |Ped.Cross.| Walkway |  StopLine  | Carpark |  Divider  |  ckpt | Log |
 |---------|----------|--------|--------|--------|--------|---------|--------|---------|--------|
-|  UniTR | 73.2  | 90.4   |   73.1   |   78.2   |   66.6   |   67.3  |   63.8   |  [ckpt](https://github.com/Haiyang-W/UniTR)| [Log](https://github.com/Haiyang-W/UniTR)|
-|  UniTR+LSS |74.7 |   90.7   |   74.0   |   79.3   |   68.2   |   72.9  |   64.2   | [ckpt](https://github.com/Haiyang-W/UniTR)| [Log](https://github.com/Haiyang-W/UniTR)|
+|  UniTR | 73.2  | 90.4   |   73.1   |   78.2   |   66.6   |   67.3  |   63.8   |  [ckpt](https://drive.google.com/file/d/1x189DFgx04SeoyVDkDoZj-FpMPzgYkcn/view?usp=sharing)| [Log](https://drive.google.com/file/d/1HOtmgS1SqTczwII1F8iieaerwzi3aiez/view?usp=sharing)|
+|  UniTR+LSS |74.7 |   90.7   |   74.0   |   79.3   |   68.2   |   72.9  |   64.2   | [ckpt](https://drive.google.com/file/d/1Jr-dlrWxJEKe0RKaf3iTPr0lYgUEFjBL/view?usp=sharing)| [Log](https://drive.google.com/file/d/1-76K3GRs3QoxcL6Q9nCCokABBkcPICtb/view?usp=sharing)|
 
 ### What's new here?
 #### 🔥 Beats previous SOTAs of outdoor multi-modal 3D Object Detection and BEV Segmentation
@@ -84,9 +85,189 @@ Our approach has achieved the best performance on multiple tasks (e.g., 3D Objec
 #### 🔥 Weight-Sharing among all modalities 
 We introduce a modality-agnostic transformer encoder to handle these view-discrepant sensor data for parallel modal-wise representation learning and automatic cross-modal interaction without additional fusion steps.
 
+#### 🔥 Prerequisite for 3D vision foundation models
+A weight-shared unified multimodal encoder is a prerequisite for foundation models, especially in the context of 3D perception, unifying information from both images and LiDAR data. This is the first truly multimodal fusion backbone, seamlessly connecting to any 3D detection head.
+
 ## Quick Start
-- TODO: Kindly request your patience.
-  
+### Installation
+
+```shell
+conda create -n unitr python=3.8
+# Install torch, we only test it in pytorch 1.10
+pip install torch==1.10.1+cu113 torchvision==0.11.2+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+
+git clone https://github.com/Haiyang-W/UniTR
+cd UniTR
+
+# Install extra dependency
+pip install -r requirements.txt
+
+# Install nuscenes-devkit
+pip install nuscenes-devkit==1.0.5
+
+# Develop
+python setup.py develop
+```
+
+### Dataset Preparation
+
+* Please download the official [NuScenes 3D object detection dataset](https://www.nuscenes.org/download) and organize the downloaded files as follows: 
+
+```
+OpenPCDet
+├── data
+│   ├── nuscenes
+│   │   │── v1.0-trainval (or v1.0-mini if you use mini)
+│   │   │   │── samples
+│   │   │   │── sweeps
+│   │   │   │── maps
+│   │   │   │── v1.0-trainval  
+├── pcdet
+├── tools
+```
+
+- (optional) To install the Map expansion for bev map segmentation task, please download the files from [Map expansion](https://www.nuscenes.org/download) (Map expansion pack (v1.3)) and copy the files into your nuScenes maps folder, e.g. `/data/nuscenes/v1.0-trainval/maps` as follows:
+```
+OpenPCDet
+├── maps
+│   ├── ......
+│   ├── boston-seaport.json
+│   ├── singapore-onenorth.json
+│   ├── singapore-queenstown.json
+│   ├── singapore-hollandvillage.json
+```
+
+* Generate the data infos by running the following command (it may take several hours): 
+
+```python 
+# Create dataset info file, lidar and image gt database
+python -m pcdet.datasets.nuscenes.nuscenes_dataset --func create_nuscenes_infos \
+    --cfg_file tools/cfgs/dataset_configs/nuscenes_dataset.yaml \
+    --version v1.0-trainval \
+    --with_cam \
+    --with_cam_gt \
+    # --share_memory # if use share mem for lidar and image gt sampling (about 24G+143G)
+# share mem will greatly improve your training speed, but need 150G extra cache mem. 
+# NOTE: all the experiments used share memory. Share mem will not affect performance
+```
+
+* The format of the generated data is as follows:
+```
+OpenPCDet
+├── data
+│   ├── nuscenes
+│   │   │── v1.0-trainval (or v1.0-mini if you use mini)
+│   │   │   │── samples
+│   │   │   │── sweeps
+│   │   │   │── maps
+│   │   │   │── v1.0-trainval  
+│   │   │   │── img_gt_database_10sweeps_withvelo
+│   │   │   │── gt_database_10sweeps_withvelo
+│   │   │   │── nuscenes_10sweeps_withvelo_lidar.npy (optional) # if open share mem
+│   │   │   │── nuscenes_10sweeps_withvelo_img.npy (optional) # if open share mem
+│   │   │   │── nuscenes_infos_10sweeps_train.pkl  
+│   │   │   │── nuscenes_infos_10sweeps_val.pkl
+│   │   │   │── nuscenes_dbinfos_10sweeps_withvelo.pkl
+├── pcdet
+├── tools
+```
+
+### Training
+Please download pretrained checkpoint from [unitr_pretrain.pth](https://drive.google.com/file/d/1SJQRI4TAKuO2GwqJ4otzMo7qGGjlBQ9u/view?usp=drive_link) and copy the file under the root folder, eg. `UniTR/unitr_pretrain.pth`.
+
+3D object detection:
+
+```shell
+# multi-gpu training
+## normal
+cd tools
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr.yaml --sync_bn --pretrained_model ../unitr_pretrain.pth [other optional arguments]
+
+## add lss
+cd tools
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+lss.yaml --sync_bn --pretrained_model ../unitr_pretrain.pth [other optional arguments]
+```
+
+BEV Map Segmentation:
+
+```shell
+# multi-gpu training
+# note that we don't use image pretrain in BEV Map Segmentation
+## normal
+cd tools
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map [other optional arguments]
+
+## add lss
+cd tools
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map [other optional arguments]
+```
+
+### Testing
+
+3D object detection:
+
+```shell
+# multi-gpu testing
+## normal
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr.yaml --ckpt <CHECKPOINT_FILE>
+
+## add LSS
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+lss.yaml --ckpt <CHECKPOINT_FILE>
+```
+
+BEV Map Segmentation
+
+```shell
+# multi-gpu testing
+## normal
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --ckpt <CHECKPOINT_FILE> --eval_map
+
+## add LSS
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map+lss.yaml --ckpt <CHECKPOINT_FILE> --eval_map
+# NOTE: evaluation results will not be logged in *.log, only be printed in the teminal
+```
+
+### Cache Testing 
+- 🔥If the camera and Lidar parameters of the dataset you are using remain constant, then using our cache mode will not affect performance. You can even cache all mapping calculations during the training phase, which can significantly accelerate your training speed.
+- Each sample in Nuscenes will `have some variations in camera parameters`, and during normal inference, we disable the cache mode to ensure result accuracy. However, due to the robustness of our mapping, even in scenarios with camera parameter variations like Nuscenes, the performance will only drop slightly (around 0.4 NDS).
+- Cache mode only supports batch_size 1 now, 8x1=8
+- Backbone caching will reduce 40% inference latency in our observation.
+```shell
+# Only for 3D Object Detection
+## normal
+### cache the mapping computation of multi-modal backbone
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_cache.yaml --ckpt <CHECKPOINT_FILE> --batch_size 8
+
+## add LSS
+### cache the mapping computation of multi-modal backbone
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+LSS_cache.yaml --ckpt <CHECKPOINT_FILE> --batch_size 8
+
+## add LSS
+### cache the mapping computation of multi-modal backbone and LSS
+cd tools
+bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+LSS_cache_plus.yaml --ckpt <CHECKPOINT_FILE> --batch_size 8
+```
+#### Performance of cache testing on NuScenes validation (some variations in camera parameters)
+|  Model  | NDS | mAP |mATE | mASE | mAOE | mAVE| mAAE |
+|---------|---------|--------|---------|---------|--------|---------|--------|
+|  UniTR (Cache Backbone) | 72.6(-0.4) | 69.4(-0.7) | 26.9 | 24.8 | 26.3 | 24.6 | 18.2 |
+|  UniTR+LSS (Cache Backbone) | 73.1(-0.2) | 70.2(-0.3) | 25.8 | 24.4 | 26.0 | 25.3 | 18.2 | 
+|  UniTR+LSS (Cache Backbone and LSS) | 72.6（-0.7） | 69.3（-1.2） | 26.7 | 24.3 | 25.9 | 25.3 | 18.2 | 
+
+
+## Possible Issues
+* If you encounter a gradient that becomes NaN during fp16 training, not support.
+* If you couldn’t find a solution, search open and closed issues in our github issues page [here](https://github.com/Haiyang-W/UniTR/issues).
+* We provide torch checkpoints option in training stage by default for saving CUDA memory 50%.
+* Samples in Nuscenes have some variations in camera parameters. So, during training, every sample recalculates the camera-lidar mapping, which significantly slows down the training speed (~40%). If the extrinsic parameters in your dataset are consistent, I recommend caching this computation during training.
+* If still no-luck, open a new issue in our github. Our turnaround is usually a couple of days.
+
 ## Citation
 Please consider citing our work as follows if it is helpful.
 ```
