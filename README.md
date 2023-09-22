@@ -53,8 +53,8 @@ In this paper, we present an efficient multi-modal backbone for outdoor 3D perce
 ### 3D Object Detection (on NuScenes validation)
 |  Model  | NDS | mAP |mATE | mASE | mAOE | mAVE| mAAE | ckpt | Log |
 |---------|---------|--------|---------|---------|--------|---------|--------|--------|--------|
-|  UniTR | 73.0 | 70.1 | 26.3 | 24.7 | 26.8 | 24.6 | 17.9 | [ckpt](https://drive.google.com/file/d/10_1QCJ2uJqQ5XBSX6SQ2EVxFFais38fK/view?usp=sharing)| [Log](https://drive.google.com/file/d/1TfPRr4bItJxgScjdxMme4-C5Lb0Mjies/view?usp=sharing)|
-|  UniTR+LSS | 73.3 | 70.5 | 26.0 | 24.4 | 26.8 | 24.8 | 18.7 | [ckpt](https://drive.google.com/file/d/1D-_RRN2P9MnI2u8DWRNt7I2-58gohRQ_/view?usp=sharing)| [Log](https://drive.google.com/file/d/1mWDXF22YmeQnHvrmLTehRJGrXySvl0NK/view?usp=sharing)|
+|  [UniTR](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr.yaml) | 73.0 | 70.1 | 26.3 | 24.7 | 26.8 | 24.6 | 17.9 | [ckpt](https://drive.google.com/file/d/10_1QCJ2uJqQ5XBSX6SQ2EVxFFais38fK/view?usp=sharing)| [Log](https://drive.google.com/file/d/1TfPRr4bItJxgScjdxMme4-C5Lb0Mjies/view?usp=sharing)|
+|  [UniTR+LSS](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr%2Blss.yaml) | 73.3 | 70.5 | 26.0 | 24.4 | 26.8 | 24.8 | 18.7 | [ckpt](https://drive.google.com/file/d/1D-_RRN2P9MnI2u8DWRNt7I2-58gohRQ_/view?usp=sharing)| [Log](https://drive.google.com/file/d/1mWDXF22YmeQnHvrmLTehRJGrXySvl0NK/view?usp=sharing)|
 
 
 ### 3D Object Detection (on NuScenes test)
@@ -66,8 +66,8 @@ In this paper, we present an efficient multi-modal backbone for outdoor 3D perce
 ### Bev Map Segmentation (on NuScenes validation)
 |  Model  | mIoU | Drivable |Ped.Cross.| Walkway |  StopLine  | Carpark |  Divider  |  ckpt | Log |
 |---------|----------|--------|--------|--------|--------|---------|--------|---------|--------|
-|  UniTR | 73.2  | 90.4   |   73.1   |   78.2   |   66.6   |   67.3  |   63.8   |  [ckpt](https://drive.google.com/file/d/1x189DFgx04SeoyVDkDoZj-FpMPzgYkcn/view?usp=sharing)| [Log](https://drive.google.com/file/d/1HOtmgS1SqTczwII1F8iieaerwzi3aiez/view?usp=sharing)|
-|  UniTR+LSS |74.7 |   90.7   |   74.0   |   79.3   |   68.2   |   72.9  |   64.2   | [ckpt](https://drive.google.com/file/d/1Jr-dlrWxJEKe0RKaf3iTPr0lYgUEFjBL/view?usp=sharing)| [Log](https://drive.google.com/file/d/1-76K3GRs3QoxcL6Q9nCCokABBkcPICtb/view?usp=sharing)|
+|  [UniTR](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr_map.yaml) | 73.2  | 90.4   |   73.1   |   78.2   |   66.6   |   67.3  |   63.8   |  [ckpt](https://drive.google.com/file/d/1x189DFgx04SeoyVDkDoZj-FpMPzgYkcn/view?usp=sharing)| [Log](https://drive.google.com/file/d/1HOtmgS1SqTczwII1F8iieaerwzi3aiez/view?usp=sharing)|
+|  [UniTR+LSS](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr_map%2Blss.yaml) |74.7 |   90.7   |   74.0   |   79.3   |   68.2   |   72.9  |   64.2   | [ckpt](https://drive.google.com/file/d/1Jr-dlrWxJEKe0RKaf3iTPr0lYgUEFjBL/view?usp=sharing)| [Log](https://drive.google.com/file/d/1-76K3GRs3QoxcL6Q9nCCokABBkcPICtb/view?usp=sharing)|
 
 ### What's new here?
 #### 🔥 Beats previous SOTAs of outdoor multi-modal 3D Object Detection and BEV Segmentation
@@ -173,7 +173,7 @@ OpenPCDet
 ```
 
 ### Training
-Please download pretrained checkpoint from [unitr_pretrain.pth](https://drive.google.com/file/d/1SJQRI4TAKuO2GwqJ4otzMo7qGGjlBQ9u/view?usp=drive_link) and copy the file under the root folder, eg. `UniTR/unitr_pretrain.pth`.
+Please download pretrained checkpoint from [unitr_pretrain.pth](https://drive.google.com/file/d/1ct6Bq-_ENbMyM-FAGggVXW_qjdgitIgl/view?usp=sharing) and copy the file under the root folder, eg. `UniTR/unitr_pretrain.pth`.
 
 3D object detection:
 
@@ -181,11 +181,11 @@ Please download pretrained checkpoint from [unitr_pretrain.pth](https://drive.go
 # multi-gpu training
 ## normal
 cd tools
-bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr.yaml --sync_bn --pretrained_model ../unitr_pretrain.pth [other optional arguments]
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr.yaml --sync_bn --pretrained_model ../unitr_pretrain.pth --logger_iter_interval 1000
 
 ## add lss
 cd tools
-bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+lss.yaml --sync_bn --pretrained_model ../unitr_pretrain.pth [other optional arguments]
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+lss.yaml --sync_bn --pretrained_model ../unitr_pretrain.pth --logger_iter_interval 1000
 ```
 
 BEV Map Segmentation:
@@ -195,11 +195,11 @@ BEV Map Segmentation:
 # note that we don't use image pretrain in BEV Map Segmentation
 ## normal
 cd tools
-bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map [other optional arguments]
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map --logger_iter_interval 1000
 
 ## add lss
 cd tools
-bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map [other optional arguments]
+bash scripts/dist_train.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map --logger_iter_interval 1000
 ```
 
 ### Testing
@@ -256,15 +256,15 @@ bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+LSS_cache_pl
 #### Performance of cache testing on NuScenes validation (some variations in camera parameters)
 |  Model  | NDS | mAP |mATE | mASE | mAOE | mAVE| mAAE |
 |---------|---------|--------|---------|---------|--------|---------|--------|
-|  UniTR (Cache Backbone) | 72.6(-0.4) | 69.4(-0.7) | 26.9 | 24.8 | 26.3 | 24.6 | 18.2 |
-|  UniTR+LSS (Cache Backbone) | 73.1(-0.2) | 70.2(-0.3) | 25.8 | 24.4 | 26.0 | 25.3 | 18.2 | 
-|  UniTR+LSS (Cache Backbone and LSS) | 72.6（-0.7） | 69.3（-1.2） | 26.7 | 24.3 | 25.9 | 25.3 | 18.2 | 
+|  [UniTR (Cache Backbone)](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr_cache.yaml) | 72.6(-0.4) | 69.4(-0.7) | 26.9 | 24.8 | 26.3 | 24.6 | 18.2 |
+|  [UniTR+LSS (Cache Backbone)](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr%2Blss_cache.yaml) | 73.1(-0.2) | 70.2(-0.3) | 25.8 | 24.4 | 26.0 | 25.3 | 18.2 | 
+|  [UniTR+LSS (Cache Backbone and LSS)](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr%2Blss_cache_plus.yaml) | 72.6（-0.7） | 69.3（-1.2） | 26.7 | 24.3 | 25.9 | 25.3 | 18.2 | 
 
 
 ## Possible Issues
 * If you encounter a gradient that becomes NaN during fp16 training, not support.
 * If you couldn’t find a solution, search open and closed issues in our github issues page [here](https://github.com/Haiyang-W/UniTR/issues).
-* We provide torch checkpoints option in training stage by default for saving CUDA memory 50%.
+* We provide torch checkpoints option [here](https://github.com/Haiyang-W/UniTR/blob/3f75dc1a362fe8f325dabd2e878ac57df2ab7323/tools/cfgs/nuscenes_models/unitr.yaml#L125) in training stage by default for saving CUDA memory 50%.
 * Samples in Nuscenes have some variations in camera parameters. So, during training, every sample recalculates the camera-lidar mapping, which significantly slows down the training speed (~40%). If the extrinsic parameters in your dataset are consistent, I recommend caching this computation during training.
 * If still no-luck, open a new issue in our github. Our turnaround is usually a couple of days.
 
