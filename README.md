@@ -13,6 +13,7 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 > Contact: Haiyang Wang (wanghaiyang6@stu.pku.edu.cn), Hao Tang (tanghao@stu.pku.edu.cn), Shaoshuai Shi (shaoshuaics@gmail.com)
 
 🚀 Gratitude to Tang Hao for extensive code refactoring and noteworthy contributions to open-source initiatives. His invaluable efforts were pivotal in ensuring the seamless completion of UniTR.
+🔥 👀 Honestly, the partition in Unitr is slow and takes about 40% of the total time, but this can be optimized to zero with better strategies or some engineering efforts, indicating that there is still huge room for speed optimization. We're not the HPC experts, but if anyone in the industry wants to improve this, we believe it could be halved. Importantly, this part doesn't scale with model size, making it friendly for larger models.
 
 
 
