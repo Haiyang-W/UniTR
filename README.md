@@ -148,8 +148,8 @@ python -m pcdet.datasets.nuscenes.nuscenes_dataset --func create_nuscenes_infos 
     --version v1.0-trainval \
     --with_cam \
     --with_cam_gt \
-    # --share_memory # if use share mem for lidar and image gt sampling (about 24G+143G)
-# share mem will greatly improve your training speed, but need 150G extra cache mem. 
+    # --share_memory # if use share mem for lidar and image gt sampling (about 24G+143G or 12G+72G)
+# share mem will greatly improve your training speed, but need 150G or 75G extra cache mem. 
 # NOTE: all the experiments used share memory. Share mem will not affect performance
 ```
 
@@ -175,7 +175,7 @@ OpenPCDet
 ```
 
 ### Training
-Please download pretrained checkpoint from [unitr_pretrain.pth](https://drive.google.com/u/0/uc?id=1SJQRI4TAKuO2GwqJ4otzMo7qGGjlBQ9u&export=download) and copy the file under the root folder, eg. `UniTR/unitr_pretrain.pth`.
+Please download pretrained checkpoint from [unitr_pretrain.pth](https://drive.google.com/u/0/uc?id=1SJQRI4TAKuO2GwqJ4otzMo7qGGjlBQ9u&export=download) and copy the file under the root folder, eg. `UniTR/unitr_pretrain.pth`. This file is the weight of pretraining DSVT on Imagenet and Nuimage datasets.
 
 3D object detection:
 
