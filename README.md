@@ -265,11 +265,12 @@ bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+LSS_cache_pl
 |  [UniTR+LSS (Cache Backbone and LSS)](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr%2Blss_cache_plus.yaml) | 72.6（-0.7） | 69.3（-1.2） | 26.7 | 24.3 | 25.9 | 25.3 | 18.2 | 
 
 ## Potential Research
-* **Infrastructure of 3D Vision Foundation Model**
+* **Infrastructure of 3D Vision Foundation Model.**
   How to make a general multimodal backbone more efficient and easy to deploy. Honestly, the partition in Unitr is slow and takes about 40% of the total time, but this can be optimized to zero with better `partition strategies` or `some engineering efforts`, indicating that there is still huge room for speed optimization. We're not the HPC experts, but if anyone in the industry wants to improve this, we believe it could be halved. Importantly, this part doesn't scale with model size, making it friendly for larger models.
-* **Multi-Modal Self-supervised Learning based on Image-Lidar pair and UniTR**
+* **Multi-Modal Self-supervised Learning based on Image-Lidar pair and UniTR.**
   Please refer to the following figure. The images and point clouds both describe the same 3D scene; they complement each other in terms of highly informative correspondence. This allows for the unsupervised learning of more generic scene representation with shared parameters.
-* **Unifide Modeling of 3D Vision**
+* **Single-Modal Pretraining.** Our model is almost the same as ViT (except for some position embedding strategies). If we adjust the position embedding appropriately, DSVT and UniTR can directly load the pretrained parameters of ViT. This is beneficial for better integration with the 2D community.
+* **Unifide Modeling of 3D Vision.**
   Please refer to the following figure. 
 <div align="center">
   <img src="assets/Figure6.png" width="800"/>
