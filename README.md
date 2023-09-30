@@ -16,7 +16,9 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 
 🔥 👀 Honestly, the partition in Unitr is slow and takes about 40% of the total time, but this can be optimized to zero with better strategies or some engineering efforts, indicating that there is still huge room for speed optimization. We're not the HPC experts, but if anyone in the industry wants to improve this, we believe it could be halved. Importantly, this part doesn't scale with model size, making it friendly for larger models.
 
+📘 I am going to share my understanding and future plan of the general 3D perception foundation model without reservation. Please refer to 🔥 [Potential Research](https://github.com/Haiyang-W/UniTR#potential-research)🔥 . If you find it useful for your research or inspiring, feel free to join me in building this blueprint.
 
+Interpretive Articles: [[CVer](https://mp.weixin.qq.com/s/du0Xtla0Wu-6-9qvhBiYPQ)] [[自动驾驶之心](https://mp.weixin.qq.com/s/Cn7IQz9HDftBYFduM6F5pQ)] [[ReadPaper](https://readpaper.com/paper/4789334767438921729)] [[知乎](https://zhuanlan.zhihu.com/p/658365971)] [[CSDN](https://blog.csdn.net/amusi1994/article/details/133287011)]
 
 ## News
 - [23-09-21] 🚀 Code of NuScenes is released.
@@ -31,7 +33,7 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 - [🚀 Main Results](https://github.com/Haiyang-W/UniTR#main-results)
 - [🛠️ Quick Start](https://github.com/Haiyang-W/UniTR#quick-start)
 - [📘 Citation](https://github.com/Haiyang-W/UniTR#citation)
-- [🚀 Acknowledgments](https://github.com/Haiyang-W/UniTR#potential-research)
+- [🚀 Acknowledgments](https://github.com/Haiyang-W/UniTR#acknowledgments)
 
 ## TODO
 
@@ -262,6 +264,16 @@ bash scripts/dist_test.sh 8 --cfg_file ./cfgs/nuscenes_models/unitr+LSS_cache_pl
 |  [UniTR+LSS (Cache Backbone)](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr%2Blss_cache.yaml) | 73.1(-0.2) | 70.2(-0.3) | 25.8 | 24.4 | 26.0 | 25.3 | 18.2 | 
 |  [UniTR+LSS (Cache Backbone and LSS)](https://github.com/Haiyang-W/UniTR/blob/main/tools/cfgs/nuscenes_models/unitr%2Blss_cache_plus.yaml) | 72.6（-0.7） | 69.3（-1.2） | 26.7 | 24.3 | 25.9 | 25.3 | 18.2 | 
 
+## Potential Research
+* `Infrastructure of 3D Vision Foundation Model`
+  How to make a general multimodal backbone more efficient and easy to deploy. Honestly, the partition in Unitr is slow and takes about 40% of the total time, but this can be optimized to zero with better strategies or some engineering efforts, indicating that there is still huge room for speed optimization. We're not the HPC experts, but if anyone in the industry wants to improve this, we believe it could be halved. Importantly, this part doesn't scale with model size, making it friendly for larger models.
+* `Multi-Modal Self-supervised Learning based on Image-Lidar pair and UniTR`
+  Please refer to the following figure. The images and point clouds both describe the same 3D scene; they complement each other in terms of highly informative correspondence. This allows for the unsupervised learning of more fundamental scene features.
+* `Unifide Modeling of 3D Vision`
+  Please refer to the following figure. 
+<div align="center">
+  <img src="assets/Figure6.png" width="800"/>
+</div>
 
 ## Possible Issues
 * If you encounter a gradient that becomes NaN during fp16 training, not support.
