@@ -18,7 +18,7 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 
 📘 I am going to share my understanding and future plan of the general 3D perception foundation model without reservation. Please refer to 🔥 [Potential Research](https://github.com/Haiyang-W/UniTR#potential-research)🔥 . If you find it useful for your research or inspiring, feel free to join me in building this blueprint.
 
-Interpretive Articles: [[CVer](https://mp.weixin.qq.com/s/du0Xtla0Wu-6-9qvhBiYPQ)] [[自动驾驶之心](https://mp.weixin.qq.com/s/Cn7IQz9HDftBYFduM6F5pQ)] [[ReadPaper](https://readpaper.com/paper/4789334767438921729)] [[知乎](https://zhuanlan.zhihu.com/p/658365971)] [[CSDN](https://blog.csdn.net/amusi1994/article/details/133287011)]
+Interpretive Articles: [[CVer](https://mp.weixin.qq.com/s/du0Xtla0Wu-6-9qvhBiYPQ)] [[自动驾驶之心](https://mp.weixin.qq.com/s/Cn7IQz9HDftBYFduM6F5pQ)] [[ReadPaper](https://readpaper.com/paper/4789334767438921729)] [[知乎](https://zhuanlan.zhihu.com/p/658365971)] [[CSDN](https://blog.csdn.net/amusi1994/article/details/133287011)] [[TechBeat (将门创投)](https://www.techbeat.net/article-info?id=5371)]
 
 ## News
 - [23-09-21] 🚀 Code of NuScenes is released.
