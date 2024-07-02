@@ -21,6 +21,7 @@ This repo is the official implementation of **ICCV2023** paper: [UniTR: A Unifie
 Interpretive Articles: [[CVer](https://mp.weixin.qq.com/s/du0Xtla0Wu-6-9qvhBiYPQ)] [[自动驾驶之心](https://mp.weixin.qq.com/s/Cn7IQz9HDftBYFduM6F5pQ)] [[ReadPaper](https://readpaper.com/paper/4789334767438921729)] [[知乎](https://zhuanlan.zhihu.com/p/658365971)] [[CSDN](https://blog.csdn.net/amusi1994/article/details/133287011)] [[TechBeat (将门创投)](https://www.techbeat.net/article-info?id=5371)]
 
 ## News
+- [24-07-01] 🔥 Our [GiT](https://github.com/Haiyang-W/GiT) was accepted by **ECCV2024**. If you find it helpful, please give it a star. 🤗
 - [24-03-15] 🔥 [GiT](https://github.com/Haiyang-W/GiT), the first successful general vision model only using a ViT is released. Corresponding to [Potential Research](https://github.com/Haiyang-W/UniTR#potential-research), we attempted to address problems with the general model on the vision side. Combining UniTR and GiT to construct an LLM-like unified model suitable for autonomous driving scenarios is an intriguing direction.
 - [23-09-21] 🚀 Code of NuScenes is released.
 - [23-08-16] 🏆  `SOTA` Our single multi-modal UniTR outshines all other non-TTA approaches on [nuScenes Detection benchmark](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Any) (Aug 2023) in terms of NDS `74.5`. 
