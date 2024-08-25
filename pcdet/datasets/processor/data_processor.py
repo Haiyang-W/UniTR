@@ -85,9 +85,15 @@ class DataProcessor(object):
             mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
             data_dict['points'] = data_dict['points'][mask]
 
+            # 이전 프레임 포인트도 동일하게 처리
+            if 'prev_points' in data_dict:
+                prev_mask = common_utils.mask_points_by_range(data_dict['prev_points'], self.point_cloud_range)
+                data_dict['prev_points'] = data_dict['prev_points'][prev_mask]
+
         if data_dict.get('gt_boxes', None) is not None and config.REMOVE_OUTSIDE_BOXES and self.training:
             mask = box_utils.mask_boxes_outside_range_numpy(
-                data_dict['gt_boxes'], self.point_cloud_range, min_num_corners=config.get('min_num_corners', 1), 
+                data_dict['gt_boxes'], self.point_cloud_range, 
+                min_num_corners=config.get('min_num_corners', 1), 
                 use_center_to_filter=config.get('USE_CENTER_TO_FILTER', True)
             )
             data_dict['gt_boxes'] = data_dict['gt_boxes'][mask]
@@ -100,8 +106,13 @@ class DataProcessor(object):
         if config.SHUFFLE_ENABLED[self.mode]:
             points = data_dict['points']
             shuffle_idx = np.random.permutation(points.shape[0])
-            points = points[shuffle_idx]
-            data_dict['points'] = points
+            data_dict['points'] = points[shuffle_idx]
+
+            # 이전 프레임 포인트도 동일하게 셔플
+            if 'prev_points' in data_dict:
+                prev_points = data_dict['prev_points']
+                prev_shuffle_idx = np.random.permutation(prev_points.shape[0])
+                data_dict['prev_points'] = prev_points[prev_shuffle_idx]
 
         return data_dict
 
@@ -150,6 +161,12 @@ class DataProcessor(object):
             )
 
         points = data_dict['points']
+
+        # 이전 프레임의 포인트 클라우드를 결합
+        if 'prev_points' in data_dict:
+            prev_points = data_dict['prev_points']
+            points = np.concatenate((prev_points, points), axis=0)
+
         voxel_output = self.voxel_generator.generate(points)
         voxels, coordinates, num_points = voxel_output
 
@@ -210,6 +227,33 @@ class DataProcessor(object):
                 choice = np.concatenate((choice, extra_choice), axis=0)
             np.random.shuffle(choice)
         data_dict['points'] = points[choice]
+
+        # 이전 프레임 포인트에 대한 샘플링
+        if 'prev_points' in data_dict and len(data_dict['prev_points']) > 0:
+            prev_points = data_dict['prev_points']
+            if num_points < len(prev_points):
+                prev_pts_depth = np.linalg.norm(prev_points[:, 0:3], axis=1)
+                prev_pts_near_flag = prev_pts_depth < 40.0
+                prev_far_idxs_choice = np.where(prev_pts_near_flag == 0)[0]
+                prev_near_idxs = np.where(prev_pts_near_flag == 1)[0]
+                prev_choice = []
+                if num_points > len(prev_far_idxs_choice):
+                    prev_near_idxs_choice = np.random.choice(prev_near_idxs,
+                                                             num_points - len(prev_far_idxs_choice), replace=False)
+                    prev_choice = np.concatenate((prev_near_idxs_choice, prev_far_idxs_choice), axis=0) \
+                        if len(prev_far_idxs_choice) > 0 else prev_near_idxs_choice
+                else:
+                    prev_choice = np.arange(0, len(prev_points), dtype=np.int32)
+                    prev_choice = np.random.choice(prev_choice, num_points, replace=False)
+                np.random.shuffle(prev_choice)
+            else:
+                prev_choice = np.arange(0, len(prev_points), dtype=np.int32)
+                if num_points > len(prev_points):
+                    prev_extra_choice = np.random.choice(prev_choice, num_points - len(prev_points), replace=False)
+                    prev_choice = np.concatenate((prev_choice, prev_extra_choice), axis=0)
+                np.random.shuffle(prev_choice)
+            data_dict['prev_points'] = prev_points[prev_choice]
+
         return data_dict
 
     def calculate_grid_size(self, data_dict=None, config=None):
