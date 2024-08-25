@@ -102,7 +102,7 @@ MODEL:
       dropout: 0.0
       activation: gelu
       checkpoint_blocks: [0,1,2,3]
-      layer_cfg: {'use_bn': False, 'split_ffn': True, 'split_residual': True, 'num_levels': 4, 'num_points': 4}
+      layer_cfg: {'use_bn': False, 'split_ffn': True, 'split_residual': True, 'deformable': True}
 
       # fuse backbone config
       FUSE_BACKBONE:

@@ -396,8 +396,13 @@ class UniTR_EncoderLayer(nn.Module):
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1,
                  activation="relu", batch_first=True, mlp_dropout=0, dout=None, layer_cfg=dict()):
         super().__init__()
-        self.win_attn = SetAttention(
-            d_model, nhead, dropout, dim_feedforward, activation, batch_first, mlp_dropout, layer_cfg)
+        if layer_cfg.get('deformable', False):
+            self.win_attn = SetDeformableAttention(
+                d_model, nhead, dropout, dim_feedforward, activation, batch_first, mlp_dropout, layer_cfg)
+        else:
+            self.win_attn = SetAttention(
+                d_model, nhead, dropout, dim_feedforward, activation, batch_first, mlp_dropout, layer_cfg)
+
         if dout is None:
             dout = d_model
         self.norm = nn.LayerNorm(dout)
@@ -412,7 +417,7 @@ class UniTR_EncoderLayer(nn.Module):
 
         return src
 
-class SetAttention(nn.Module):
+class SetDeformableAttention(nn.Module):
     def __init__(self, d_model, nhead, dropout, dim_feedforward=2048, activation="relu", batch_first=True, mlp_dropout=0, layer_cfg=dict()):
         super().__init__()
         self.nhead = nhead
@@ -480,100 +485,100 @@ class SetAttention(nn.Module):
         return src
 
 
-# class SetAttention(nn.Module):
+class SetAttention(nn.Module):
 
-#     def __init__(self, d_model, nhead, dropout, dim_feedforward=2048, activation="relu", batch_first=True, mlp_dropout=0, layer_cfg=dict()):
-#         super().__init__()
-#         self.nhead = nhead
-#         if batch_first:
-#             self.self_attn = nn.MultiheadAttention(
-#                 d_model, nhead, dropout=dropout, batch_first=batch_first)
-#         else:
-#             self.self_attn = nn.MultiheadAttention(
-#                 d_model, nhead, dropout=dropout)
+    def __init__(self, d_model, nhead, dropout, dim_feedforward=2048, activation="relu", batch_first=True, mlp_dropout=0, layer_cfg=dict()):
+        super().__init__()
+        self.nhead = nhead
+        if batch_first:
+            self.self_attn = nn.MultiheadAttention(
+                d_model, nhead, dropout=dropout, batch_first=batch_first)
+        else:
+            self.self_attn = nn.MultiheadAttention(
+                d_model, nhead, dropout=dropout)
 
-#         # Implementation of Feedforward model
-#         self.linear1 = nn.Linear(d_model, dim_feedforward)
-#         self.dropout = nn.Dropout(mlp_dropout)
-#         self.linear2 = nn.Linear(dim_feedforward, d_model)
-#         self.d_model = d_model
-#         self.layer_cfg = layer_cfg
+        # Implementation of Feedforward model
+        self.linear1 = nn.Linear(d_model, dim_feedforward)
+        self.dropout = nn.Dropout(mlp_dropout)
+        self.linear2 = nn.Linear(dim_feedforward, d_model)
+        self.d_model = d_model
+        self.layer_cfg = layer_cfg
 
-#         use_bn = layer_cfg.get('use_bn', False)
-#         if use_bn:
-#             assert use_bn is False
-#         else:
-#             self.norm1 = nn.LayerNorm(d_model)
-#             self.norm2 = nn.LayerNorm(d_model)
+        use_bn = layer_cfg.get('use_bn', False)
+        if use_bn:
+            assert use_bn is False
+        else:
+            self.norm1 = nn.LayerNorm(d_model)
+            self.norm2 = nn.LayerNorm(d_model)
 
-#         if layer_cfg.get('split_ffn', False):
-#             # Implementation of lidar Feedforward model
-#             self.lidar_linear1 = nn.Linear(d_model, dim_feedforward)
-#             self.lidar_dropout = nn.Dropout(mlp_dropout)
-#             self.lidar_linear2 = nn.Linear(dim_feedforward, d_model)
+        if layer_cfg.get('split_ffn', False):
+            # Implementation of lidar Feedforward model
+            self.lidar_linear1 = nn.Linear(d_model, dim_feedforward)
+            self.lidar_dropout = nn.Dropout(mlp_dropout)
+            self.lidar_linear2 = nn.Linear(dim_feedforward, d_model)
 
-#             use_bn = layer_cfg.get('use_bn', False)
-#             if use_bn:
-#                 assert use_bn is False
-#             else:
-#                 self.lidar_norm1 = nn.LayerNorm(d_model)
-#                 self.lidar_norm2 = nn.LayerNorm(d_model)
+            use_bn = layer_cfg.get('use_bn', False)
+            if use_bn:
+                assert use_bn is False
+            else:
+                self.lidar_norm1 = nn.LayerNorm(d_model)
+                self.lidar_norm2 = nn.LayerNorm(d_model)
 
-#         self.dropout1 = nn.Identity()
-#         self.dropout2 = nn.Identity()
+        self.dropout1 = nn.Identity()
+        self.dropout2 = nn.Identity()
 
-#         self.activation = _get_activation_fn(activation)
+        self.activation = _get_activation_fn(activation)
 
-#     def forward(self, src, pos=None, key_padding_mask=None, voxel_inds=None, voxel_num=0):
-#         set_features = src[voxel_inds]  # [win_num, 36, d_model]
-#         if pos is not None:
-#             set_pos = pos[voxel_inds]
-#         else:
-#             set_pos = None
-#         if pos is not None:
-#             query = set_features + set_pos
-#             key = set_features + set_pos
-#             value = set_features
-#         if key_padding_mask is not None:
-#             src2 = self.self_attn(query, key, value, key_padding_mask)[0]
-#         else:
-#             src2 = self.self_attn(query, key, value)[0]
+    def forward(self, src, pos=None, key_padding_mask=None, voxel_inds=None, voxel_num=0):
+        set_features = src[voxel_inds]  # [win_num, 36, d_model]
+        if pos is not None:
+            set_pos = pos[voxel_inds]
+        else:
+            set_pos = None
+        if pos is not None:
+            query = set_features + set_pos
+            key = set_features + set_pos
+            value = set_features
+        if key_padding_mask is not None:
+            src2 = self.self_attn(query, key, value, key_padding_mask)[0]
+        else:
+            src2 = self.self_attn(query, key, value)[0]
 
-#         flatten_inds = voxel_inds.reshape(-1)
-#         unique_flatten_inds, inverse = torch.unique(
-#             flatten_inds, return_inverse=True)
-#         perm = torch.arange(inverse.size(
-#             0), dtype=inverse.dtype, device=inverse.device)
-#         inverse, perm = inverse.flip([0]), perm.flip([0])
-#         perm = inverse.new_empty(
-#             unique_flatten_inds.size(0)).scatter_(0, inverse, perm)
-#         src2 = src2.reshape(-1, self.d_model)[perm]
+        flatten_inds = voxel_inds.reshape(-1)
+        unique_flatten_inds, inverse = torch.unique(
+            flatten_inds, return_inverse=True)
+        perm = torch.arange(inverse.size(
+            0), dtype=inverse.dtype, device=inverse.device)
+        inverse, perm = inverse.flip([0]), perm.flip([0])
+        perm = inverse.new_empty(
+            unique_flatten_inds.size(0)).scatter_(0, inverse, perm)
+        src2 = src2.reshape(-1, self.d_model)[perm]
 
-#         if self.layer_cfg.get('split_ffn', False):
-#             src = src + self.dropout1(src2)
-#             lidar_norm = self.lidar_norm1(src[:voxel_num])
-#             image_norm = self.norm1(src[voxel_num:])
-#             src = torch.cat([lidar_norm, image_norm], dim=0)
+        if self.layer_cfg.get('split_ffn', False):
+            src = src + self.dropout1(src2)
+            lidar_norm = self.lidar_norm1(src[:voxel_num])
+            image_norm = self.norm1(src[voxel_num:])
+            src = torch.cat([lidar_norm, image_norm], dim=0)
 
-#             lidar_linear2 = self.lidar_linear2(self.lidar_dropout(
-#                 self.activation(self.lidar_linear1(src[:voxel_num]))))
-#             image_linear2 = self.linear2(self.dropout(
-#                 self.activation(self.linear1(src[voxel_num:]))))
-#             src2 = torch.cat([lidar_linear2, image_linear2], dim=0)
+            lidar_linear2 = self.lidar_linear2(self.lidar_dropout(
+                self.activation(self.lidar_linear1(src[:voxel_num]))))
+            image_linear2 = self.linear2(self.dropout(
+                self.activation(self.linear1(src[voxel_num:]))))
+            src2 = torch.cat([lidar_linear2, image_linear2], dim=0)
 
-#             src = src + self.dropout2(src2)
-#             lidar_norm2 = self.lidar_norm2(src[:voxel_num])
-#             image_norm2 = self.norm2(src[voxel_num:])
-#             src = torch.cat([lidar_norm2, image_norm2], dim=0)
-#         else:
-#             src = src + self.dropout1(src2)
-#             src = self.norm1(src)
-#             src2 = self.linear2(self.dropout(
-#                 self.activation(self.linear1(src))))
-#             src = src + self.dropout2(src2)
-#             src = self.norm2(src)
+            src = src + self.dropout2(src2)
+            lidar_norm2 = self.lidar_norm2(src[:voxel_num])
+            image_norm2 = self.norm2(src[voxel_num:])
+            src = torch.cat([lidar_norm2, image_norm2], dim=0)
+        else:
+            src = src + self.dropout1(src2)
+            src = self.norm1(src)
+            src2 = self.linear2(self.dropout(
+                self.activation(self.linear1(src))))
+            src = src + self.dropout2(src2)
+            src = self.norm2(src)
 
-#         return src
+        return src
 
 
 class UniTRInputLayer(DSVTInputLayer):
