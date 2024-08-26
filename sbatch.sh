@@ -37,7 +37,7 @@ cd tools
 #     --extra_tag temporal --ckpt ../output/cfgs/nuscenes_models/unitr_map/temporal/ckpt/latest_model.pth
 
 ## temporal deformable
-bash scripts/dist_train.sh 2 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map --logger_iter_interval 1000 --use_amp --extra_tag temporal_deformable
+bash scripts/dist_train.sh 2 --cfg_file ./cfgs/nuscenes_models/unitr_map.yaml --sync_bn --eval_map --use_amp --logger_iter_interval 1000 --extra_tag temporal_deformable
 
 ## add lss
 # bash scripts/dist_train.sh 2 --cfg_file ./cfgs/nuscenes_models/unitr_map+lss.yaml --sync_bn --eval_map --logger_iter_interval 1000

@@ -428,17 +428,32 @@ class SetDeformableAttention(nn.Module):
             heads=nhead,
             dim_head=d_model // nhead,
             dropout=dropout,
-            downsample_factor = 1,
-            offset_kernel_size = 3  # 커널 크기를 줄임
+            downsample_factor=1,
+            offset_kernel_size=3  # 커널 크기를 줄임
         )
 
-        # 기존의 Feedforward network 및 layer normalization 유지
+        # Feedforward network
         self.linear1 = nn.Linear(d_model, dim_feedforward)
         self.dropout = nn.Dropout(mlp_dropout)
         self.linear2 = nn.Linear(dim_feedforward, d_model)
+        self.d_model = d_model
+        self.layer_cfg = layer_cfg
 
-        self.norm1 = nn.LayerNorm(d_model)
-        self.norm2 = nn.LayerNorm(d_model)
+        # Layer normalization
+        use_bn = layer_cfg.get('use_bn', False)
+        if not use_bn:
+            self.norm1 = nn.LayerNorm(d_model)
+            self.norm2 = nn.LayerNorm(d_model)
+
+        # Split FFN (for Lidar and image data)
+        if layer_cfg.get('split_ffn', False):
+            self.lidar_linear1 = nn.Linear(d_model, dim_feedforward)
+            self.lidar_dropout = nn.Dropout(mlp_dropout)
+            self.lidar_linear2 = nn.Linear(dim_feedforward, d_model)
+            if not use_bn:
+                self.lidar_norm1 = nn.LayerNorm(d_model)
+                self.lidar_norm2 = nn.LayerNorm(d_model)
+
         self.dropout1 = nn.Identity()
         self.dropout2 = nn.Identity()
 
@@ -459,30 +474,42 @@ class SetDeformableAttention(nn.Module):
 
         # Deformable attention 수행
         src2 = self.self_attn(query)
-        # print(f"src shape: {src.shape}, src2 shape: {src2.shape}")
+        
+        flatten_inds = voxel_inds.reshape(-1)
+        unique_flatten_inds, inverse = torch.unique(
+            flatten_inds, return_inverse=True)
+        perm = torch.arange(inverse.size(
+            0), dtype=inverse.dtype, device=inverse.device)
+        inverse, perm = inverse.flip([0]), perm.flip([0])
+        perm = inverse.new_empty(
+            unique_flatten_inds.size(0)).scatter_(0, inverse, perm)
+        src2 = src2.reshape(-1, self.d_model)[perm]
+        print("src2: ", src2.shape)
 
-        # 4차원에서 3차원으로 변환
-        src2 = src2.squeeze(3).permute(0, 2, 1)  # [batch_size, sequence_length, d_model]
-        # 3차원 -> 2차원  
-        # src2 = src2.view(-1, src2.size(-1))  # [batch_size * sequence_length, d_model]
-        src2 = src2.reshape(-1, src2.size(-1))
+        # Split FFN 처리 (Lidar와 이미지 데이터 분리 처리)
+        if self.layer_cfg.get('split_ffn', False):
+            src = src + self.dropout1(src2)
+            lidar_norm = self.lidar_norm1(src[:voxel_num])
+            image_norm = self.norm1(src[voxel_num:])
+            src = torch.cat([lidar_norm, image_norm], dim=0)
 
-        # # 크기 확인
-        # print(f"2 src shape: {src.shape}, src2 shape: {src2.shape}")
+            lidar_linear2 = self.lidar_linear2(self.lidar_dropout(self.activation(self.lidar_linear1(src[:voxel_num]))))
+            image_linear2 = self.linear2(self.dropout(self.activation(self.linear1(src[voxel_num:]))))
+            src2 = torch.cat([lidar_linear2, image_linear2], dim=0)
 
-        # 크기 맞추기: src2를 src 크기에 맞게 자르거나 확장
-        if src2.size(0) > src.size(0):
-            src2 = src2[:src.size(0), :]  # 크기에 맞게 자르기
+            src = src + self.dropout2(src2)
+            lidar_norm2 = self.lidar_norm2(src[:voxel_num])
+            image_norm2 = self.norm2(src[voxel_num:])
+            src = torch.cat([lidar_norm2, image_norm2], dim=0)
         else:
-            src2 = src2.repeat((src.size(0) // src2.size(0)) + 1, 1)[:src.size(0), :]  # 반복해서 확장 후 자르기
-
-        src = src + self.dropout1(src2)
-        src = self.norm1(src)
-        src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
-        src = src + self.dropout2(src2)
-        src = self.norm2(src)
+            src = src + self.dropout1(src2)
+            src = self.norm1(src)
+            src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
+            src = src + self.dropout2(src2)
+            src = self.norm2(src)
 
         return src
+
 
 
 class SetAttention(nn.Module):
