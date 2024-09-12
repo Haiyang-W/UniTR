@@ -86,7 +86,7 @@ MODEL:
         hybrid_factor: [1, 1, 1] # x, y, z
         shifts_list: [[[0, 0, 0], [15, 15, 0]]]
         input_image: True
-      
+
       LIDAR_INPUT_LAYER:
         sparse_shape: [256, 256, 1]
         d_model: [128]
@@ -102,7 +102,7 @@ MODEL:
       dropout: 0.0
       activation: gelu
       checkpoint_blocks: [0,1,2,3]
-      layer_cfg: {'use_bn': False, 'split_ffn': True, 'split_residual': True}
+      layer_cfg: {'use_bn': False, 'split_ffn': True, 'split_residual': True, 'deformable': True}
 
       # fuse backbone config
       FUSE_BACKBONE:
@@ -185,7 +185,7 @@ MODEL:
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 3
+    BATCH_SIZE_PER_GPU: 1
     NUM_EPOCHS: 20
 
     OPTIMIZER: adam_onecycle

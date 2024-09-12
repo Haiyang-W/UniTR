@@ -10,6 +10,8 @@ from pcdet.models.backbones_3d.dsvt import _get_activation_fn, DSVTInputLayer
 from pcdet.ops.ingroup_inds.ingroup_inds_op import ingroup_inds
 get_inner_win_inds_cuda = ingroup_inds
 
+from deformable_attention import DeformableAttention  # lucidrains의 구현체 import
+
 class UniTR(nn.Module):
     '''
     UniTR: A Unified and Efficient Multi-Modal Transformer for Bird's-Eye-View Representation.
@@ -281,7 +283,7 @@ class UniTR(nn.Module):
             batch_dict)
         image2lidar_coords_bzyx = torch.cat(
             [batch_dict['patch_coords'][:, :1].clone(), image2lidar_coords_zyx], dim=1)
-        image2lidar_coords_bzyx[:, 0] = image2lidar_coords_bzyx[:, 0] // N
+        image2lidar_coords_bzyx[:, 0] = torch.div(image2lidar_coords_bzyx[:, 0], N, rounding_mode='floor')
         image2lidar_batch_dict = {}
         image2lidar_batch_dict['voxel_features'] = multi_feat.clone()
         image2lidar_batch_dict['voxel_coords'] = torch.cat(
@@ -310,7 +312,8 @@ class UniTR(nn.Module):
         lidar2image_coords_bzyx = torch.cat(
             [batch_dict['voxel_coords'][:, :1].clone(), lidar2image_coords_zyx], dim=1)
         multiview_coords = batch_dict['patch_coords'].clone()
-        multiview_coords[:, 0] = batch_dict['patch_coords'][:, 0] // N
+        multiview_coords[:, 0] = torch.div(batch_dict['patch_coords'][:, 0], N, rounding_mode='floor')
+        # multiview_coords[:, 0] = batch_dict['patch_coords'][:, 0] // N
         multiview_coords[:, 1] = batch_dict['patch_coords'][:, 0] % N
         multiview_coords[:, 2] += hw_shape[1]
         multiview_coords[:, 3] += hw_shape[0]
@@ -340,6 +343,7 @@ class UniTR(nn.Module):
     def _recover_image(self, pillar_features, coords, indices):
         pillar_features = getattr(self, f'out_norm{indices}')(pillar_features)
         batch_size = coords[:, 0].max().int().item() + 1
+        print("batch_size: ", batch_size)
         batch_spatial_features = pillar_features.view(
             batch_size, self.patch_size[0], self.patch_size[1], -1).permute(0, 3, 1, 2).contiguous()
         return batch_spatial_features
@@ -392,8 +396,13 @@ class UniTR_EncoderLayer(nn.Module):
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1,
                  activation="relu", batch_first=True, mlp_dropout=0, dout=None, layer_cfg=dict()):
         super().__init__()
-        self.win_attn = SetAttention(
-            d_model, nhead, dropout, dim_feedforward, activation, batch_first, mlp_dropout, layer_cfg)
+        if layer_cfg.get('deformable', False):
+            self.win_attn = SetDeformableAttention(
+                d_model, nhead, dropout, dim_feedforward, activation, batch_first, mlp_dropout, layer_cfg)
+        else:
+            self.win_attn = SetAttention(
+                d_model, nhead, dropout, dim_feedforward, activation, batch_first, mlp_dropout, layer_cfg)
+
         if dout is None:
             dout = d_model
         self.norm = nn.LayerNorm(dout)
@@ -407,6 +416,102 @@ class UniTR_EncoderLayer(nn.Module):
         src = self.norm(src)
 
         return src
+
+class SetDeformableAttention(nn.Module):
+    def __init__(self, d_model, nhead, dropout, dim_feedforward=2048, activation="relu", batch_first=True, mlp_dropout=0, layer_cfg=dict()):
+        super().__init__()
+        self.nhead = nhead
+        
+        # 기존 nn.MultiheadAttention 대신 deformable attention 사용
+        self.self_attn = DeformableAttention(
+            dim=d_model,
+            heads=nhead,
+            dim_head=d_model // nhead,
+            dropout=dropout,
+            downsample_factor=1,
+            offset_kernel_size=3  # 커널 크기를 줄임
+        )
+
+        # Feedforward network
+        self.linear1 = nn.Linear(d_model, dim_feedforward)
+        self.dropout = nn.Dropout(mlp_dropout)
+        self.linear2 = nn.Linear(dim_feedforward, d_model)
+        self.d_model = d_model
+        self.layer_cfg = layer_cfg
+
+        # Layer normalization
+        use_bn = layer_cfg.get('use_bn', False)
+        if not use_bn:
+            self.norm1 = nn.LayerNorm(d_model)
+            self.norm2 = nn.LayerNorm(d_model)
+
+        # Split FFN (for Lidar and image data)
+        if layer_cfg.get('split_ffn', False):
+            self.lidar_linear1 = nn.Linear(d_model, dim_feedforward)
+            self.lidar_dropout = nn.Dropout(mlp_dropout)
+            self.lidar_linear2 = nn.Linear(dim_feedforward, d_model)
+            if not use_bn:
+                self.lidar_norm1 = nn.LayerNorm(d_model)
+                self.lidar_norm2 = nn.LayerNorm(d_model)
+
+        self.dropout1 = nn.Identity()
+        self.dropout2 = nn.Identity()
+
+        self.activation = nn.ReLU() if activation == "relu" else nn.GELU()
+
+    def forward(self, src, pos=None, key_padding_mask=None, voxel_inds=None, voxel_num=0):
+        set_features = src[voxel_inds]  # [win_num, 36, d_model]
+        if pos is not None:
+            set_pos = pos[voxel_inds]
+        else:
+            set_pos = None
+
+        # Deformable attention query는 feature와 positional encoding을 더한 값
+        query = set_features + set_pos if pos is not None else set_features
+
+        # 추가: 입력을 4차원으로 변환 (conv2d를 위해)
+        query = query.permute(0, 2, 1).unsqueeze(3)  # [batch_size, d_model, sequence_length, 1]
+
+        # Deformable attention 수행
+        src2 = self.self_attn(query)
+        
+        flatten_inds = voxel_inds.reshape(-1)
+        unique_flatten_inds, inverse = torch.unique(
+            flatten_inds, return_inverse=True)
+        perm = torch.arange(inverse.size(
+            0), dtype=inverse.dtype, device=inverse.device)
+        inverse, perm = inverse.flip([0]), perm.flip([0])
+        perm = inverse.new_empty(
+            unique_flatten_inds.size(0)).scatter_(0, inverse, perm)
+        src2 = src2.reshape(-1, self.d_model)[perm]
+        print("src2: ", src2.shape)
+
+        # Split FFN 처리 (Lidar와 이미지 데이터 분리 처리)
+        if self.layer_cfg.get('split_ffn', False):
+            src = src + self.dropout1(src2)
+            lidar_norm = self.lidar_norm1(src[:voxel_num])
+            image_norm = self.norm1(src[voxel_num:])
+            src = torch.cat([lidar_norm, image_norm], dim=0)
+
+            lidar_linear2 = self.lidar_linear2(self.lidar_dropout(self.activation(self.lidar_linear1(src[:voxel_num]))))
+            image_linear2 = self.linear2(self.dropout(self.activation(self.linear1(src[voxel_num:]))))
+            src2 = torch.cat([lidar_linear2, image_linear2], dim=0)
+
+            src = src + self.dropout2(src2)
+            lidar_norm2 = self.lidar_norm2(src[:voxel_num])
+            image_norm2 = self.norm2(src[voxel_num:])
+            src = torch.cat([lidar_norm2, image_norm2], dim=0)
+        else:
+            src = src + self.dropout1(src2)
+            src = self.norm1(src)
+            src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
+            src = src + self.dropout2(src2)
+            src = self.norm2(src)
+
+        return src
+
+
+
 class SetAttention(nn.Module):
 
     def __init__(self, d_model, nhead, dropout, dim_feedforward=2048, activation="relu", batch_first=True, mlp_dropout=0, layer_cfg=dict()):

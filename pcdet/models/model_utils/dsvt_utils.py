@@ -60,9 +60,12 @@ def get_window_coors(coors, sparse_shape, window_shape, do_shift, shift_list=Non
     shifted_coors_y = coors[:, 2] + shift_y
     shifted_coors_z = coors[:, 1] + shift_z
 
-    win_coors_x = shifted_coors_x // win_shape_x
-    win_coors_y = shifted_coors_y // win_shape_y
-    win_coors_z = shifted_coors_z // win_shape_z
+    # win_coors_x = shifted_coors_x // win_shape_x
+    # win_coors_y = shifted_coors_y // win_shape_y
+    # win_coors_z = shifted_coors_z // win_shape_z
+    win_coors_x = torch.div(shifted_coors_x, win_shape_x, rounding_mode='floor')
+    win_coors_y = torch.div(shifted_coors_y, win_shape_y, rounding_mode='floor')
+    win_coors_z = torch.div(shifted_coors_z, win_shape_z, rounding_mode='floor')
 
     if len(window_shape) == 2:
         assert (win_coors_z == 0).all()
@@ -97,9 +100,12 @@ def get_pooling_index(coors, sparse_shape, window_shape):
     coors_y = coors[:, 2]
     coors_z = coors[:, 1]
 
-    win_coors_x = coors_x // win_shape_x
-    win_coors_y = coors_y // win_shape_y
-    win_coors_z = coors_z // win_shape_z
+    # win_coors_x = coors_x // win_shape_x
+    # win_coors_y = coors_y // win_shape_y
+    # win_coors_z = coors_z // win_shape_z
+    win_coors_x = torch.div(coors_x, win_shape_x, rounding_mode='floor')
+    win_coors_y = torch.div(coors_y, win_shape_y, rounding_mode='floor')
+    win_coors_z = torch.div(coors_z, win_shape_z, rounding_mode='floor')
 
     batch_win_inds = coors[:, 0] * max_num_win_per_sample + \
                         win_coors_x * max_num_win_y * max_num_win_z + \
